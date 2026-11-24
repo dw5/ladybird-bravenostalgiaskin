@@ -1,0 +1,58 @@
+@import "./siteDetails.less";
+
+.siteDetailsPage {
+  min-width: 704px;
+
+  .siteDetailsPageContent {
+    &.aboutBrave {
+      .sortableTable {
+        user-select: text;
+        width: 400px;
+        td {
+          cursor: auto;
+          padding-left: 8px;
+        }
+      }
+    }
+
+    .sortableTable {
+      user-select: none;
+      // Time visited
+      .time {
+        font-size: 11pt;
+        font-weight: 800;
+        text-align: center;
+        width: 154px;
+        white-space: nowrap;
+
+        // Delete button
+        .deleteEntry {
+          display: none;
+        }
+        &:hover .deleteEntry{
+          color: @gray;
+        }
+      }
+
+      // Entry title
+      .title {
+        font-size: 11pt;
+        max-width: 415px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      // Entry domain
+      .domain {
+        font-size: 11pt;
+      }
+
+      td {
+        &:nth-of-type(2) {
+          width: 60%;
+        }
+      }
+    }
+  }
+}

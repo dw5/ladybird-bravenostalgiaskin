@@ -1,0 +1,209 @@
+@import "./common.less";
+
+div, span, li, em, p, a {
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+strong {
+  font-weight: 600
+}
+
+body {
+  background: @veryLightGray;
+}
+
+.notImplemented {
+  display: none !important; /* for testing/debug only */
+}
+
+.prefTabContainer {
+  flex-grow: 1;
+  padding: 40px;
+  min-width: 704px;
+
+  > div {
+    > .column {
+      width: 340px;
+
+      &.gutter {
+        border-left: solid 1px @lightGray;
+        padding-left: 40px;
+      }
+      > div .settingsList {
+        margin: 2.5em 0 1em;
+      }
+      > div:first-of-type {
+        .settingsList {
+          margin: 1em 0;
+        }
+      }
+    }
+    > .settingsListTitle {
+      color: @braveOrange;
+      font-size: 1.125em;
+      margin-bottom: 1.25em;
+      margin-top: 0;
+    }
+  }
+}
+
+.prefBody {
+  display: flex;
+  height: 100%;
+  margin-left: @sideBarWidth;
+  outline: none;
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.settingsListContainer {
+  margin-bottom: @settingsListContainerMargin;
+}
+
+.settingsListTitle,
+.settingsListCopy,
+.settingsListLink,
+.settingsList .settingItem span:not(.browserButton),
+.settingsList em,
+.settingsList .subtext {
+  color: @darkGray;
+  font-size: 0.9em;
+  margin: 1.2em 2px 7px;
+}
+
+.settingsList .subtext {
+  &.flashText {
+    margin-top: 0;
+
+    .flashInfoIcon {
+      cursor: pointer;
+      padding: 5px;
+    }
+  }
+}
+
+.settingsListCopy {
+  color: @braveOrange;
+  cursor: pointer;
+  font-family: "Lucida Sans Typewriter", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
+  font-size: 1em;
+
+  &.alt {
+    color: black;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+span.settingsListCopy {
+  background-color: @lightGray;
+}
+
+.settingsListLink {
+  color: @braveOrange;
+  font-size: 1em;
+
+  &.alt {
+    color: black;
+    text-decoration: underline;
+  }
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.settingsList {
+  .settingItem {
+    > *:not(.switchControl) {
+      margin-bottom: 10px;
+      min-width: 160px;
+      vertical-align: middle;
+    }
+
+    .switchControl {
+      min-width: 54px;
+    }
+
+    span:not(.browserButton) {
+      display: block;
+      padding-right: 10px;
+    }
+
+    label {
+      text-align: left;
+      font-size: 0.95em;
+    }
+
+    input[type="number"] {
+      width: 50px;
+      min-width: 50px;
+    }
+
+    select[disabled] {
+      color: #ccc
+    }
+
+    .checkboxContainer {
+      width: 100px;
+    }
+
+    .manageAdblockSettings {
+      margin-top: 1em;
+    }
+  }
+
+  .subtext {
+    font-size: @settingItemSubtextFontSize;
+  }
+
+  .iconTitle {
+    margin: 1.2em 2px 7px;
+    color: #444444;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+  }
+}
+
+input[type="checkbox"][disabled] {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+table.sortableTable {
+  // For Sync tab
+  tbody td:first-of-type {
+    text-align: center;
+    color: @braveOrange;
+    font-weight: 800;
+  }
+}
+
+#searchSelectIcon {
+  width: 16px;
+  height: 16px;
+  color: @braveOrange;
+}
+
+.widevineInfo {
+  line-height: 1.3em;
+
+  .fa-info-circle {
+    margin-left: 5px;
+    cursor: pointer;
+  }
+}

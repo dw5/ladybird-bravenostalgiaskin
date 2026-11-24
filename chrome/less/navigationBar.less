@@ -1,0 +1,709 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/**
+ * Navigation layers
+ */
+
+@import "animations.less";
+@import "variables.less";
+
+// All platforms - media queries
+@media (max-width: @breakpointNarrowViewport) {
+  .loadTime { display: none; }
+}
+
+
+// windows which do not have window buttons on left
+.navigatorWrapper {
+  margin-left: 10px;
+}
+// macOS has window nav buttons inset on left on window so allow space
+// (does not show for fullscreen)
+.navigatorWrapper.hasWindowInsetLeftButtons:not(.fullscreen) {
+  margin-left: @navbarLeftMarginDarwin;
+}
+
+
+// Windows specific styles
+.platform--win32 {
+  #window.frameless:not(.isFullScreen):not(.isMaximized) {
+    border: 1px solid #000;
+    box-sizing: border-box;
+  }
+
+  #navigator {
+    .urlbarForm {
+      input {
+        font-weight: 500;
+        line-height: 1.4;
+        margin: 0; // #5624
+        top: 0; // #5624
+      }
+    }
+  }
+
+  #urlInput { width: 100%; }
+
+  // changes to ensure window can be as small as 480px wide
+  // and still be useable and have the caption buttons intact
+  @media (max-width: @breakpointExtensionButtonPadding) {
+    .navigatorWrapper .topLevelEndButtons .extraDragArea {
+      width: 0;
+    }
+  }
+
+  @media (max-width: @breakpointTinyWin32) {
+    .loadTime { display: none; }
+  }
+
+  // Windows 7 specific styles
+  &.win7 {
+    .windowCaptionButtons {
+      > .container {
+        margin-right: 6px;
+
+        button.captionButton {
+          outline: 0;
+          height: 18px;
+          color: #b1acac;
+          border: 1px solid #adadad;
+          border-top: 0;
+          display: inline-block;
+          background-color: #f5f5f5;
+          box-shadow: inset 1px 1px rgba(255, 255, 255, 0.9);
+          width: 25px;
+
+          &.minimize {
+            width: 28px;
+            border-right: 0px;
+            &:hover {
+              background-color: #fff;
+            }
+            &:active {
+              background-color: #cacacb;
+            }
+            border-radius: 0 0 0 4px;
+
+            .widget {
+              width: 10px;
+              height: 3px;
+              border: 1px solid #838383;
+              background: #fff;
+              display: inline-block;
+              border-radius: 1px;
+            }
+          }
+
+          &.maximize {
+            border-right: 0px;
+            width: 27px;
+            &:hover {
+              background-color: #fff;
+              .widget {
+                .widget2 {
+                  background-color: #fff;
+                }
+              }
+            }
+            &:active {
+              background-color: #cacacb;
+              .widget {
+                .widget2 {
+                  background-color: #cacacb;
+                }
+              }
+            }
+            &.fullscreen {
+              &:hover {
+                background-color: #e5e5e5;
+              }
+              &:active {
+                background-color: #cacacb;
+              }
+              .widget {
+                .widget1 {
+                  width: 8px;
+                  top: 2px;
+                  left: 10px;
+                }
+                .widget2 {
+                  width: 8px;
+                  height: 8px;
+                  top: -5px;
+                  left: 6px;
+                  background: #fff;
+                  border-radius: 1px;
+                }
+                .widget3 {
+                  display: inline-block;
+                  width: 2px;
+                  height: 2px;
+                  border: 1px solid #838383;
+                  background: #fff;
+                  position: relative;
+                  top: -20px;
+                  left: -2px;
+                }
+              }
+            }
+
+            .widget {
+              .widget1 {
+                width: 10px;
+                height: 8px;
+                border: 1px solid #838383;
+                background: #fff;
+                position: relative;
+                top: 2px;
+                left: 7px;
+                border-radius: 1px;
+              }
+              .widget2 {
+                width: 4px;
+                height: 2px;
+                border: 1px solid #838383;
+                background-color: #f5f5f5;
+                position: relative;
+                top: -5px;
+                left: 10px;
+                border-radius: 0;
+              }
+              .widget3 { display: none; }
+            }
+          }
+
+          &.close {
+            width: 48px;
+            border-radius: 0 0 4px 0;
+            &:hover {
+              background-color: #d9504e;
+            }
+            &:active {
+              background-color: #d7393d;
+            }
+
+            .widget {
+              background: url('../img/windows/close.svg') no-repeat;
+              display: inline-block;
+              height: 12px;
+              width: 12px;
+              position: relative;
+              top: 3px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Windows 10 specific styles
+  &.win10 {
+    &.inactive div#window.frameless:not(.isFullScreen):not(.isMaximized) {
+      border: 1px solid #aaaaaa;
+    }
+    div#window.frameless:not(.isFullScreen):not(.isMaximized) {
+      border: 1px solid #2283d3;
+    }
+    .windowCaptionButtons {
+      &.verticallyCenter {
+        > .container {
+          height: 100%;
+        }
+      }
+      &:not(.verticallyCenter) {
+        > .container {
+          button.captionButton {
+            height: 29px;
+            &.fullscreen {
+              height: 21px;
+            }
+          }
+        }
+      }
+
+      > .container {
+        button.captionButton {
+          width: 45px;
+          border: 0;
+          background-color: transparent;
+
+          &.minimize {
+            &:hover {
+              background-color: #e5e5e5;
+            }
+            &:active {
+              background-color: #cacacb;
+            }
+            &.fullscreen {
+              .widget {
+                top: 5px;
+                left: -2px;
+              }
+            }
+            .widget {
+              background: url('../img/windows/win10_minimize.svg') no-repeat;
+              display: inline-block;
+              height: 10px;
+              width: 10px;
+              position: relative;
+              top: 4px;
+              left: -1px;
+            }
+          }
+
+          &.maximize {
+            border-right: 0px;
+            &:hover {
+              background-color: #e5e5e5;
+            }
+            &:active {
+              background-color: #cacacb;
+            }
+            &.fullscreen {
+              &:hover {
+                background-color: #e5e5e5;
+              }
+              &:active {
+                background-color: #cacacb;
+              }
+              .widget {
+                background: url('../img/windows/win10_restore.svg') no-repeat;
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                position: relative;
+                top: 0px;
+                left: -2px;
+              }
+            }
+            .widget {
+              background: url('../img/windows/win10_expand.svg') no-repeat;
+              display: inline-block;
+              height: 10px;
+              width: 10px;
+              position: relative;
+              top: -1px;
+              left: -1px;
+
+              .widget1 { display: none; }
+              .widget2 { display: none; }
+              .widget3 { display: none; }
+            }
+          }
+
+          &.close {
+            width: 46px;
+            &:hover {
+              background-color: #e5182c;
+              .widget {
+                background: url('../img/windows/win10_close_white.svg') no-repeat;
+              }
+            }
+            &:not(:hover) {
+              .widget {
+                background: url('../img/windows/win10_close.svg') no-repeat;
+              }
+            }
+            &:active {
+              background-color: #ef717c;
+            }
+            &.fullscreen {
+              top: 0px;
+              width: 45px;
+            }
+            .widget {
+              display: inline-block;
+              height: 10px;
+              left: -1px;
+              position: relative;
+              top: -1px;
+              width: 10px;
+            }
+          }
+        }
+      }
+    }
+    .verticallyCenter {
+      justify-content: center;
+    }
+  }
+}
+
+// Styles had to be reworked to properly position the new caption buttons for Windows
+.navbarCaptionButtonContainer {
+  display: flex;
+  margin-bottom: @navbarMenubarMargin;
+
+  &.allowDragging {
+    -webkit-app-region: drag;
+  }
+}
+.navbarMenubarFlexContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  white-space: nowrap;
+}
+.navbarMenubarBlockContainer {
+  display: block;
+  width: 100%;
+}
+
+// Window Caption Buttons (for use w/ slim titlebar)
+.windowCaptionButtons {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+
+  .hidden {
+    display: none;
+  }
+
+  button.captionButton {
+    outline: none;
+    vertical-align: top;
+  }
+
+  &.fullscreen {
+    .win7 {
+      margin-top: 1px;
+    }
+  }
+
+  .container {
+    display: flex;
+    flex-grow: 0;
+    -webkit-app-region: no-drag;
+  }
+}
+
+// Menubar (for use w/ slim titlebar)
+.menubarContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .windowCaptionButtons {
+    flex-grow: 0;
+  }
+}
+
+.navigatorWrapper {
+  display: flex;
+
+  // Buttons on the left
+  .backforward {
+    display: flex;
+  }
+
+  // Navigation bar at the center
+  #navigator {
+    display: flex;
+    flex-grow: 1;
+    min-width: 0%; // allow the navigator to shrink
+    max-width: 900px;
+
+    // keep the nav items centered until not enough space
+    margin: 0;
+    @media (min-width: 700px) {
+      margin: 0 3%;
+    }
+    @media (min-width: 850px) {
+      margin: 0 5%;
+    }
+    @media (min-width: 1000px) {
+      margin: 0 7%;
+    }
+
+
+    @media (max-width: @breakpointNarrowViewport) {
+      width: 100%;
+    }
+  }
+
+  // Buttons on the right
+  .topLevelEndButtons {
+    -webkit-app-region: no-drag;
+    display: flex;
+    flex-direction: row;
+    margin-left: 3px;
+    position: relative;
+  }
+}
+
+.navigatorWrapper {
+  justify-content: space-between;
+  align-items: center;
+  margin-top: @navbarMenubarMargin;
+  box-sizing: border-box;
+
+  /**
+   * Left buttons
+   */
+  .backforward {
+    display: flex;
+    z-index: @zindexNavigationBar;
+    transition: margin @transitionDuration ease-in-out;
+
+    button {
+      user-select: none;
+      color: @buttonColor;
+      cursor: default;
+      border-radius: 0px;
+      font-weight: 300;
+
+      &:not([disabled]) {
+        opacity: 1;
+        -webkit-app-region: no-drag;
+      }
+    }
+  }
+}
+
+.urlbarForm {
+  position: relative; // PR #6485
+  width: 0; // Fixes #4298
+  align-items: center;
+  height: @urlbarFormHeight;
+  padding: 0 8px 0 8px;
+  margin-right: 5px;
+  display: flex;
+  flex-grow: 1;
+  border-radius: 3px;
+  min-width: 0;
+
+
+  color: @chromeText;
+  background-clip: padding-box;
+  // transition: background .24s ease-in-out, border .24s ease-in-out;
+  transition-duration: var(--url-bar-progress-transition-duration, .24s);
+  --url-border-color: rgb(214,218,221);
+  // non-title-mode and not hover and not focused
+  border: 1px solid var(--url-border-color);
+  box-shadow: 0 0 0 rgba(0,0,0,.05);
+  --url-bg-color: white;
+  background-color: var(--url-bg-color);
+
+  // progress indicator
+  position: relative;
+  &:before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+
+    border: none;
+    border-radius: 3px;
+    // loading-progress-bar achieved through background position
+    transition: background var(--url-bar-progress-transition-duration, .24s) ease-out, opacity .24s ease-out;
+    transition-duration: var(--url-bar-progress-transition-duration, .24s);
+    // subtle variation in loading-progress-bar gradient
+    background:  linear-gradient(to right, transparent 0%, rgba(74, 144, 226, .05) 4%, rgba(74, 144, 226, .1) 100%, rgba(74, 144, 226, .2) 196%, transparent 200%) -4% top / 200% 100% no-repeat, var(--url-bg-color) left top / 100% 100% no-repeat;
+    // default to done
+    background-position: ~"calc(200% - var(--navigation-progress-percent, 300%)) top";
+  }
+
+  &.urlBarForm_loading {
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  // title mode
+  &.urlBarForm_titleMode {
+    --url-bg-color: rgba(255, 255, 255, 1);
+    border-color: transparent;
+  }
+
+  &.urlBarForm_tabChanged {
+    --url-bar-progress-transition-duration: 0s;
+  }
+
+  // hover or focused
+  &:hover,
+  &.urlBarForm_focused {
+    box-shadow: 0 0px 3px 0 var(--url-border-color); // 0 0px 5px 0 rgba(74, 144, 226, 0.3)
+  }
+
+  // focused
+  &.urlBarForm_focused {
+    --url-border-color: rgba(74, 144, 226,.4) ;
+  }
+
+
+  *:not(legend) {
+    z-index: @zindexUrlbarNotLegend;
+  }
+
+  legend:before {
+    content: ' ';
+    position: absolute;
+    border-radius: 0 0px 0px 0;
+    color: #333;
+    box-shadow: inset 0 0 0 1px @urlBarOutline, inset 0 0 0 3px @focusUrlbarOutline;
+    outline: none;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: @zindexNavigationBar;
+    display: none;
+  }
+
+  input:focus + legend:before {
+    //display: block;
+  }
+
+
+  @media (max-width: @breakpointNarrowViewport) {
+    max-width: 80%;
+  }
+}
+
+#navigator {
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  position: relative;
+  user-select: none;
+  z-index: @zindexNavigationBar;
+  // #6253 #6680
+  > * {
+    -webkit-app-region: no-drag;
+    z-index: @zindexNavigationBarElements;
+  }
+
+  form {
+    -webkit-app-region: drag;
+    // Disable window dragging so that selecting text and dragging the favicon is possible.
+    input, .urlbarIcon {
+      -webkit-app-region: no-drag;
+    }
+  }
+
+  .endButtons {
+    display: flex;
+  }
+
+  // Create 25x25 squares and place the buttons at the center of each container
+  .addPublisherButtonContainer {
+    border: 1px solid @urlBarOutline;
+    border-radius: @borderRadiusURL;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: @urlbarFormHeight;
+    width: @urlbarFormHeight;
+    min-height: @urlbarFormHeight;
+    min-width: @urlbarFormHeight;
+    -webkit-app-region: no-drag;
+  }
+
+
+  .urlbarForm {
+    .loadTime {
+      color: @loadTimeColor;
+      font-size: 12px;
+      text-align: right;
+      cursor: default;
+
+      &.onFocus {
+        display: none;
+      }
+
+      &.noBorderRadius {
+        border-radius: 0;
+
+        legend:before {
+          border-radius: 0;
+        }
+      }
+    }
+
+    /* Disable selection of button text */
+    > span {
+       user-select: none;
+    }
+
+    input {
+      border: none;
+      box-sizing: border-box;
+      line-height: 1;
+      cursor: text;
+      outline: none;
+
+      // #4922: make the whole .urlbarForm clickable
+      height: 100%;
+      background: transparent;
+
+      &.private {
+        background: @privateTabBackground;
+        color: @chromeText;
+      }
+
+      &:focus {
+        margin-right: 3px;
+      }
+    }
+
+    input,
+    .titleBar
+    {
+      color: #333;
+      letter-spacing: -0.125px;
+      flex: 1;
+      font-size: 13px;
+      font-weight: normal;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      min-width: 0%; // allow the navigator to shrink
+      width: 100%;
+
+    }
+
+    // Create 25x25 square and place .urlbarIcon at the center of it
+    .urlbarIconContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      margin-right: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      .evCert {
+        font-size: 12px;
+        color: @siteEVColor;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-right: 1px solid #ccc;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.topLevelEndButtons .braveMenu {
+  background-image: -webkit-image-set(url(../app/extensions/brave/img/braveBtn.png) 1x,
+                                      url(../app/extensions/brave/img/braveBtn2x.png) 2x,
+                                      url(../app/extensions/brave/img/braveBtn3x.png) 3x);
+  background-repeat: no-repeat;
+
+  &:hover {
+    background-image: -webkit-image-set(url(../app/extensions/brave/img/braveBtn_hover.png) 1x,
+                                        url(../app/extensions/brave/img/braveBtn2x_hover.png) 2x,
+                                        url(../app/extensions/brave/img/braveBtn3x_hover.png) 3x);
+  }
+}

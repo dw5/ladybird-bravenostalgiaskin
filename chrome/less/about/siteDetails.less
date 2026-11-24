@@ -1,0 +1,65 @@
+@import "./itemList.less";
+@import "./common.less";
+
+strong, div, span, li, em, p, a {
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: @veryLightGray;
+}
+
+.siteDetailsPage {
+  margin: 0;
+  padding-top: 24px;
+
+  .siteDetailsPageHeader {
+    padding: 0 @aboutPageSectionPadding;
+
+    .headerActions {
+      display: flex;
+      align-items: center;
+
+      /*overridden from siteDetails.less*/
+      input.searchInput {
+        padding: 5px;
+        margin-left: 12px;
+        font-size: 16px;
+        min-width: 280px;
+      }
+
+      .searchInputPlaceholder {
+        color: @gray;
+        font-family: FontAwesome;
+        left: -25px;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        width: 0;
+      }
+
+      .searchInputClear {
+        margin: 0;
+        padding: 0;
+        width: 0;
+        position: relative;
+        left: -25px;
+      }
+    }
+  }
+
+  .siteDetailsPageContent {
+    border-top: 0px;
+    margin-top: 24px;
+    display: block;
+    clear: both;
+  }
+}
+
+.searchInputClear {
+  float: right;
+  padding: 8px;
+  margin-top: -39px;
+  color: #999;
+}

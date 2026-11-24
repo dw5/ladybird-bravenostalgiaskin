@@ -1,0 +1,20 @@
+/* The chrome page only draws the tab strip + navbar; Ladybird draws the page below it. */
+html, body {
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+#window > .mainContainer {
+  display: none !important;
+}
+
+/* The 2019 end-of-life banner from browser-laptop; this Brave lives again. */
+[class^="deprecationBanner_"] {
+  display: none !important;
+}
+
+/* The Windows 10 styles used for the caption buttons also draw a frame border; Ladybird draws its own. */
+div#window.frameless {
+  border: 0 !important;
+}

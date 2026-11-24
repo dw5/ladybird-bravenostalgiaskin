@@ -1,0 +1,78 @@
+@import "./common.less";
+
+// See siteDetails.less
+body {
+  background: @veryLightGray;
+}
+
+#appContainer {
+  &.errorPageContainer {
+    overflow: auto;
+    height: 100%;
+
+    .errorContent {
+      display: flex;
+      width: 60vw;
+      max-width: 600px;
+      margin: 20vh auto;
+      line-height: 1.6em;
+      flex-direction: column;
+      padding: 40px;
+      height: auto;
+
+      .certErrorText, .errorTitle {
+        padding-bottom: 1rem;
+      }
+
+      .buttons {
+        display: flex;
+        flex-flow: row wrap;
+
+        > .browserButton {
+          font-size: 14px;
+        }
+      }
+
+      .errorLogo {
+        margin-bottom: 2rem;
+
+        .errorLogoInner {
+          fill: @braveOrange;
+        }
+      }
+
+      .errorUrl,
+      .errorText {
+        word-wrap: break-word;
+      }
+
+      .errorUrl {
+        font-weight: bolder;
+      }
+
+      .errorText {
+        color: @chromeSecondary;
+        display: block;
+      }
+
+      .subtleText {
+        color: #999;
+        padding-top: 20px;
+      }
+
+      .certAttrText {
+        color: @chromeText;
+        display: inline;
+      }
+    }
+
+    &.safeBrowsing {
+      background-color: red;
+
+      .errorContent {
+        // See the body property above
+        background: @veryLightGray;
+      }
+    }
+  }
+}

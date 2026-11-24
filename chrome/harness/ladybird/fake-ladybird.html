@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!-- Dev harness: runs the Ladybird chrome bundle in any browser, with a fake `ladybird`
+     WebUI object standing in for BraveChrome.cpp. Serve chrome/ and open
+     /harness/ladybird/fake-ladybird.html after `npm run ladybird`. -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Brave chrome (fake Ladybird)</title>
+    <style>
+      body { margin: 0; }
+      #chrome { position: relative; height: 170px; }
+      body.tall #chrome { height: 560px; }
+      #page { border-top: 1px dashed #999; padding: 12px; font: 13px monospace; white-space: pre-wrap; }
+    </style>
+    <script>
+      (function () {
+        let nextId = 1
+        const tabs = []
+        let activeId = null
+        const log = []
+
+        function tab (url, title) {
+          return { id: nextId++, url: url, title: title || url, favicon: '', loading: false, history: [url], pos: 0 }
+        }
+        function emit () {
+          const data = {
+            tabs: tabs.map((t) => ({
+              id: t.id, title: t.title, url: t.url, favicon: t.favicon, loading: t.loading,
+              active: t.id === activeId, isPrivate: false,
+              canGoBack: t.pos > 0, canGoForward: t.pos < t.history.length - 1
+            }))
+          }
+          setTimeout(() => document.dispatchEvent(new CustomEvent('WebUIMessage', { detail: { name: 'tabsChanged', data: data } })), 0)
+          render()
+        }
+        function find (id) { return tabs.find((t) => t.id === id) || tabs.find((t) => t.id === activeId) }
+        function go (t, url) {
+          t.history = t.history.slice(0, t.pos + 1).concat([url]); t.pos++
+          t.url = /^\w+:/.test(url) ? url : 'https://' + url; t.title = t.url; t.loading = true
+          setTimeout(() => { t.loading = false; t.title = 'Loaded ' + t.url; emit() }, 600)
+        }
+        function render () {
+          const el = document.getElementById('page')
+          if (el) el.textContent = 'active tab: ' + JSON.stringify(find(activeId)) + '\n\nmessages:\n' + log.slice(-15).join('\n')
+        }
+
+        window.ladybird = {
+          sendMessage: function (name, data) {
+            log.push(name + ' ' + JSON.stringify(data))
+            const t = find(data && data.tabId)
+            switch (name) {
+              case 'chromeReady': break
+              case 'newTab': { const n = tab(data.url || 'about:newtab', 'New Tab'); tabs.push(n); activeId = n.id; break }
+              case 'navigate': go(t, data.url); break
+              case 'activateTab': activeId = t.id; break
+              case 'closeTab': {
+                const i = tabs.indexOf(t); tabs.splice(i, 1)
+                if (!tabs.length) tabs.push(tab('about:newtab', 'New Tab'))
+                if (t.id === activeId) activeId = tabs[Math.min(i, tabs.length - 1)].id
+                break
+              }
+              case 'goBack': if (t.pos > 0) { t.pos--; t.url = t.history[t.pos]; t.title = t.url } break
+              case 'goForward': if (t.pos < t.history.length - 1) { t.pos++; t.url = t.history[t.pos]; t.title = t.url } break
+              case 'reload': find(activeId).loading = true; setTimeout(() => { find(activeId).loading = false; emit() }, 600); break
+              case 'stop': find(activeId).loading = false; break
+            }
+            emit()
+          }
+        }
+
+        tabs.push(tab('https://example.com', 'Example Domain'))
+        tabs.push(tab('https://ladybird.org', 'Ladybird'))
+        activeId = tabs[0].id
+        window.addEventListener('error', (e) => { log.push('JS ERROR: ' + e.message); render() })
+
+        // #selftest: click the second tab, click +, then type a URL into the omnibox and press Enter.
+        if (location.hash === '#ctx') {
+          document.addEventListener('DOMContentLoaded', () => document.body.classList.add('tall'))
+          setTimeout(() => {
+            const tab = document.querySelector('[data-test-id="tab"]')
+            tab.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 60, clientY: 85 }))
+            setTimeout(() => {
+              const items = Array.from(document.querySelectorAll('.contextMenuItem')).map((e) => e.textContent.trim()).filter(Boolean)
+              log.push('MENU ' + JSON.stringify(items.slice(0, 12)))
+              render()
+            }, 500)
+          }, 1000)
+        }
+        if (location.hash === '#menu') {
+          document.addEventListener('DOMContentLoaded', () => document.body.classList.add('tall'))
+          setTimeout(() => {
+            document.querySelector('[data-test-id="menuButton"]').click()
+            setTimeout(() => {
+              const help = Array.from(document.querySelectorAll('.contextMenuItem')).find((e) => /Help/.test(e.textContent))
+              if (help) help.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+              setTimeout(() => {
+                const regions = log.filter((l) => l.indexOf('setChromeHeight') === 0)
+                log.push('LAST ' + regions[regions.length - 1]); render()
+                // Outline the reported rectangles.
+                const last = JSON.parse(regions[regions.length - 1].slice('setChromeHeight '.length))
+                last.region.forEach(([x, y, w, h]) => {
+                  const d = document.createElement('div')
+                  d.style.cssText = 'position:fixed;pointer-events:none;outline:2px dashed red;z-index:99999;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px'
+                  document.body.appendChild(d)
+                })
+              }, 600)
+            }, 500)
+          }, 1000)
+        }
+        if (location.hash === '#star') {
+          document.addEventListener('DOMContentLoaded', () => document.body.classList.add('tall'))
+          setTimeout(() => {
+            const b = document.querySelector('[data-test-id="addBookmarkButton"]')
+            b ? b.click() : log.push('no star button')
+            setTimeout(() => {
+              const regions = log.filter((l) => l.indexOf('setChromeHeight') === 0)
+              log.push('LAST ' + regions[regions.length - 1])
+              // Name each painted box reported, to find stray ones.
+              const last = JSON.parse(regions[regions.length - 1].slice('setChromeHeight '.length))
+              last.region.slice(1).forEach(([x, y, w, h]) => {
+                const el = document.elementFromPoint(x + 2, y + 2)
+                let e = el; const chain = []
+                while (e && e.id !== 'window' && chain.length < 6) { chain.push(e.tagName + '.' + String(e.className).slice(0, 60)); e = e.parentElement }
+                log.push([x, y, w, h].join(',') + ' <- ' + chain.join(' < '))
+              })
+              render()
+            }, 800)
+            render()
+          }, 1000)
+        }
+        if (location.hash === '#selftest') {
+          const q = (sel) => document.querySelector(sel)
+          const steps = [
+            () => {
+              const t = document.querySelectorAll('[data-test-id="tab"]')[0]
+              // React 15 derives onMouseEnter from the mouseout leaving the previous element.
+              document.body.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: t }))
+              t.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body }))
+            },
+            () => log.push('close icons: ' + Array.from(document.querySelectorAll('[data-test2-id]')).map((e) => e.getAttribute('data-test2-id')).join(',')),
+            () => document.querySelectorAll('[data-test-id="tab"]')[1].click(),
+            () => q('[data-test-id="newTabButton"]').click(),
+            () => {
+              const input = q('[data-test-id="urlInput"]') || q('#urlInput')
+              input.focus()
+              const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+              setter.call(input, 'ladybird.org')
+              input.dispatchEvent(new Event('input', { bubbles: true }))
+              input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, which: 13, bubbles: true }))
+            },
+            () => { const b = q('[data-test-id="navigationBackButtonEnabled"]'); b ? b.click() : log.push('no back button') }
+          ]
+          let i = 0
+          const next = () => {
+            if (i >= steps.length) return
+            try { steps[i]() } catch (e) { log.push('STEP ' + i + ' FAILED: ' + e.message) }
+            i++; render(); setTimeout(next, 800)
+          }
+          setTimeout(next, 1000)
+        }
+      })()
+    </script>
+    <script src="../../dist-ladybird/brave-chrome.js"></script>
+  </head>
+  <body>
+    <div id="chrome"><div id="appContainer"></div></div>
+    <div id="page"></div>
+  </body>
+</html>

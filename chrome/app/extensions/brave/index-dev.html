@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="availableLanguages" content="">
+    <meta name="defaultLanguage" content="en-US">
+    <!-- TODO: Don't allow img-src *, needed for favicons -->
+    <!-- TODO: Refactor away all unsafe-inline content -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; form-action http://localhost:*; script-src 'self' http://localhost:*; connect-src 'self' http://localhost:* ws://localhost:*; style-src 'unsafe-inline'; font-src 'self' http://localhost:*; img-src 'self' * data: file: chrome-extension:; object-src 'self'; plugin-types application/browser-plugin">
+    <meta name="referrer" content="no-referrer">
+    <title>Brave</title>
+    <script src="ext/l20n.min.js"></script>
+    <script src="gen/app.entry.js" async></script>
+    <script src="gen/lib.devTools.js" async></script>
+    <link rel="localization" href="locales/{locale}/app.properties">
+    <link rel="localization" href="locales/{locale}/common.properties">
+    <link rel="localization" href="locales/{locale}/bravery.properties">
+    <link rel="localization" href="locales/{locale}/menu.properties">
+    <link rel="localization" href="locales/{locale}/downloads.properties">
+    <link rel="localization" href="locales/{locale}/countries.properties">
+    <link rel="localization" href="locales/{locale}/locales.properties">
+    <link rel="localization" href="locales/{locale}/preferences.properties">
+  </head>
+  <body>
+    <div id="appContainer">
+      <div id="webpackLoading" style="display:none">
+        <p>
+          <span>Loading...</span>
+        </p>
+      </div>
+      <div id="setupError" style="display:none">
+        <p>
+          <span>Please make sure the webpack devserver is running via:</span><br>
+          <code>npm run watch</code>
+        </p>
+
+        <p>
+          <span>Please consult the repository's README for more information:</span><br>
+          <a href="https://github.com/brave/browser-electron/blob/master/README.md">https://github.com/brave/browser-electron/blob/master/README.md</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

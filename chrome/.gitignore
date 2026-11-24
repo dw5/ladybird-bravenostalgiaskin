@@ -1,0 +1,6 @@
+node_modules/
+public/gen/
+npm-debug.log*
+*.log
+.DS_Store
+dist-ladybird/
