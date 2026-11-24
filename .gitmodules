@@ -1,3 +1,4 @@
 [submodule "ladybird"]
 	path = ladybird
-	url = https://github.com/LadybirdBrowser/ladybird.git
+	url = https://github.com/dw5/ladybird-bravenostalgiaskin.git
+	branch = brave-nostalgia
